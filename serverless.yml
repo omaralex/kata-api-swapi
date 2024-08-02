@@ -1,0 +1,104 @@
+service: kata-api-swapi
+frameworkVersion: '3'
+
+package:
+  individually: true
+
+plugins:
+  - serverless-offline
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: webpack.config.js
+    includeModules: true
+    packager: "yarn"
+    packagerOptions:
+      noFrozenLockfile: true
+  defaultStage: dev
+  defaultRegion: us-east-2
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${self:custom.defaultStage}
+  region: ${self:custom.defaultRegion}
+  profile: prod_profile
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Scan
+            - dynamodb:Query
+          Resource: arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/SwapiTable
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::bucket-kata-api-swapi
+            - arn:aws:s3:::bucket-kata-api-swapi/*
+
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: '*'
+
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+            - lambda:ListFunctions
+            - lambda:ListAliases
+            - lambda:GetFunction
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - apigateway:GET
+            - apigateway:POST
+            - apigateway:DELETE
+            - apigateway:PATCH
+          Resource: '*'
+
+functions:
+  getHandler:
+    handler: src/handler.getHandler
+    events:
+      - httpApi:
+          path: /api/personas
+          method: get
+      - httpApi:
+          path: /api/docs/{proxy+}
+          method: get
+      - httpApi:
+          path: /swapi/{proxy+}
+          method: get
+  postHandler:
+    handler: src/handler.postHandler
+    events:
+      - httpApi:
+          path: /api/personas
+          method: post
+
+resources:
+  Resources:
+    SwapiTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: SwapiTable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5

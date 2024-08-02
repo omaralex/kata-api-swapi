@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: API Documentation Kata Softtek
+  description: A sample API with the just purpose of selection process
+  version: 1.0.0
+
+components:
+  schemas:
+    Person:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: "Luke Skywalker"
+        fechaNacimiento:
+          type: string
+          example: "19BBY"
+        colorOjos:
+          type: string
+          example: "blue"
+        genero:
+          type: string
+          example: "male"
+        colorCabello:
+          type: string
+          example: "blond"
+        estatura:
+          type: string
+          example: "172"
+        peso:
+          type: string
+          example: "77"
+        colorPiel:
+          type: string
+          example: "fair"
+        planetaNatal:
+          type: string
+          example: "Tatooine"
+        peliculas:
+          type: array
+          items:
+            type: string
+          example: ["A New Hope", "The Empire Strikes Back"]
+        especies:
+          type: array
+          items:
+            type: string
+          example: ["Human"]
+        navesEstelares:
+          type: array
+          items:
+            type: string
+          example: ["X-wing"]
+        vehiculos:
+          type: array
+          items:
+            type: string
+          example: ["Speeder bike"]
+        url:
+          type: string
+          example: "http://swapi.py4e.com/api/people/1/"
+        fechaCreacion:
+          type: string
+          example: "2014-12-09T13:50:51.644000Z"
+        fechaEdicion:
+          type: string
+          example: "2014-12-20T21:17:56.891000Z"
+
+paths:
+  /swapi/people/{id}/:
+    get:
+      summary: Get people info from API swapi
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Information about a person
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+
+  /api/personas:
+    get:
+      summary: Retrieve a list of people stored in Dynamo
+      responses:
+        '200':
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person'
+
+    post:
+      summary: Create a new person and store it in Dymano
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+      responses:
+        '200':
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'

@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "outDir": "./build/",
+    "noImplicitAny": true,
+    "module": "es2020",
+    "lib": [
+      "es2020"
+    ],
+    "target": "es2020",
+    "moduleResolution": "node",
+  },
+  "types": [
+    "node"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ],
+  "include": [
+    "src"
+  ],
+}
